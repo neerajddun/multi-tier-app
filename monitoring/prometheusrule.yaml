@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   name: app-dep-alerts
-  namespace: myapp
+  namespace: shop
   labels:
     release: monitoring
     app: app-dep
@@ -22,7 +22,7 @@ spec:
         - alert: MyAppPodRestartingFrequently
           expr: |
             sum by (pod, namespace) (
-              increase(kube_pod_container_status_restarts_total{namespace="myapp", pod=~"app-dep-.*"}[15m])
+              increase(kube_pod_container_status_restarts_total{namespace="shop", pod=~"app-dep-.*"}[15m])
             ) > 3
           for: 5m
           labels:
@@ -33,10 +33,10 @@ spec:
 
         - alert: MyAppReplicasMismatch
           expr: |
-            kube_deployment_status_replicas_available{deployment="app-dep", namespace="myapp"}
+            kube_deployment_status_replicas_available{deployment="app-dep", namespace="shop"}
               <
               on(deployment, namespace)
-              kube_deployment_spec_replicas{deployment="app-dep", namespace="myapp"}
+              kube_deployment_spec_replicas{deployment="app-dep", namespace="shop"}
           for: 5m
           labels:
             severity: warning
